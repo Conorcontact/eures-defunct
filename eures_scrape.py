@@ -61,7 +61,6 @@ def flat(v):
         return json.dumps(v, ensure_ascii=False)
     return v
 
-
 def post_search(page):
     body = {
         "resultsPerPage": PAGE_SIZE, "page": page, "sortSearch": "MOST_RECENT",
@@ -75,8 +74,12 @@ def post_search(page):
         r = requests.post(SEARCH_URL, json=body, headers=HEADERS, timeout=60)
         if r.status_code == 200:
             return r.json()
+        print(f"Search failed: HTTP {r.status_code}\n{r.text[:1500]}", file=sys.stderr)
+        if r.status_code == 400:
+            break  # retrying a bad request won't help
         time.sleep(5 * (attempt + 1))
     r.raise_for_status()
+
 
 
 def get_detail(job_id):
