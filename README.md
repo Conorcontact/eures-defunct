@@ -17,7 +17,7 @@ Both tables share a `job_id` column, so they can be joined on it.
 
 ## How it works
 
-- A GitHub Actions workflow (`.github/workflows/scrape.yml`) runs daily at **03:17 UTC**.
+- A GitHub Actions workflow (`.github/workflows/eures_scrape.yml`) runs daily at **03:17 UTC**.
 - `scrape.py` queries the EURES search API for Ireland with a "last 24 hours" filter, pages through all results, then fetches the detail record for each job.
 - Job IDs already present in any earlier file are skipped, so overlapping runs never create duplicates.
 - New rows are appended to the current week's files. The first run after Sunday 00:01 UTC creates a fresh pair of files, and the previous week's files are left untouched.
@@ -27,9 +27,9 @@ Both tables share a `job_id` column, so they can be joined on it.
 
 1. Create a GitHub repository and add these files, keeping this structure:
    ```
-   scrape.py
+   eures_scrape.py
    README.md
-   .github/workflows/scrape.yml
+   .github/workflows/eures_scrape.yml
    ```
 2. Go to **Settings â†’ Actions â†’ General â†’ Workflow permissions** and select **Read and write permissions**.
 3. Go to the **Actions** tab, choose **EURES Ireland daily scrape**, and click **Run workflow** to test it.
@@ -43,14 +43,14 @@ Each week, download the finished week's two files from the `data/` folder in the
 
 ```bash
 pip install requests
-python scrape.py
+python eures_scrape.py
 ```
 
 Output goes to `./data/`.
 
 ## Configuration
 
-Edit the constants at the top of `scrape.py`:
+Edit the constants at the top of `eures_scrape.py`:
 
 | Setting | Purpose |
 |---------|---------|
