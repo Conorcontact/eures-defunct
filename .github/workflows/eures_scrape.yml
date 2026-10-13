@@ -1,0 +1,27 @@
+name: EURES Ireland daily scrape
+
+on:
+  schedule:
+    - cron: "17 3 * * *"   # 03:17 UTC daily; off the top of the hour, when Actions is busiest
+  workflow_dispatch:        # lets you run it manually from the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install requests
+      - run: python eures_scrape.py
+      - name: Commit data files
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add data/
+          git diff --staged --quiet || git commit -m "Data update $(date -u +%F)"
+          git push
